@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Menu, LogOut } from 'lucide-react';
+import { Search, Menu, LogOut, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { LoginModal } from './LoginModal';
 import { RegisterModal } from './RegisterModal';
 import { AlertModal } from './AlertModal';
@@ -42,6 +43,14 @@ export function Header() {
         <div className="flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-4">
+              {user.role === 'admin' && (
+                <Link 
+                  to="/admin" 
+                  className="hidden md:flex items-center gap-2 text-sm font-medium text-purple-400 bg-purple-400/10 px-3 py-1.5 rounded-lg hover:bg-purple-400/20 transition-colors border border-purple-400/20"
+                >
+                  <Shield size={16} /> Painel Admin
+                </Link>
+              )}
               <div className="flex flex-col items-end">
                 <span className="text-xs text-gray-400">Saldo</span>
                 <span className="text-sm font-bold text-lime-500">R$ {user.balance.toFixed(2)}</span>

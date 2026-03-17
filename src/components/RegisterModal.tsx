@@ -55,7 +55,7 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-white uppercase tracking-wider">Telefone</label>
                 <input
-                  type="tel"
+                  type="text"
                   placeholder="(00) 00000-0000"
                   className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
                 />

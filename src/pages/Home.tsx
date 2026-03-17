@@ -1,4 +1,3 @@
-import React from 'react';
 import { Sparkles, Star } from 'lucide-react';
 import { MarketCard } from '../components/MarketCard';
 import { useApp } from '../context/AppContext';
@@ -70,16 +69,15 @@ export function Home() {
           
           <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
             {trendingMarkets.map(market => (
-              <React.Fragment key={market.id}>
-                <MarketCard
-                  id={market.id}
-                  title={market.title}
-                  image={market.image}
-                  type={market.type}
-                  options={market.options}
-                  binaryData={market.binaryData}
-                />
-              </React.Fragment>
+              <MarketCard
+                key={market.id}
+                id={market.id}
+                title={market.title}
+                image={market.image}
+                type={market.type}
+                options={market.options}
+                binaryData={market.binaryData}
+              />
             ))}
           </div>
         </section>
@@ -106,16 +104,15 @@ export function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {celebrityMarkets.map(market => (
-              <React.Fragment key={market.id}>
-                <MarketCard
-                  id={market.id}
-                  title={market.title}
-                  image={market.image}
-                  type={market.type}
-                  options={market.options}
-                  binaryData={market.binaryData}
-                />
-              </React.Fragment>
+              <MarketCard
+                key={market.id}
+                id={market.id}
+                title={market.title}
+                image={market.image}
+                type={market.type}
+                options={market.options}
+                binaryData={market.binaryData}
+              />
             ))}
           </div>
         </section>

@@ -6,6 +6,7 @@ export const mockUser: User = {
   email: 'joao@gmail.com',
   avatar: 'https://picsum.photos/seed/joao/100/100',
   balance: 150.00,
+  role: 'admin'
 };
 
 export const mockMarkets: Market[] = [
@@ -15,6 +16,7 @@ export const mockMarkets: Market[] = [
     image: 'https://picsum.photos/seed/bbb/100/100',
     type: 'multiple',
     category: 'Entretenimento',
+    status: 'active',
     volume: 'R$4,243.78',
     endDate: 'Apr 21, 2026',
     options: [
@@ -37,6 +39,7 @@ export const mockMarkets: Market[] = [
     image: 'https://picsum.photos/seed/bbb2/100/100',
     type: 'multiple',
     category: 'Entretenimento',
+    status: 'active',
     volume: 'R$1,243.00',
     endDate: 'Mar 24, 2026',
     options: [
@@ -53,6 +56,7 @@ export const mockMarkets: Market[] = [
     image: 'https://picsum.photos/seed/trump/100/100',
     type: 'binary',
     category: 'Política',
+    status: 'active',
     volume: 'R$218.42',
     endDate: 'Mar 31, 2026',
     binaryData: {
@@ -75,6 +79,7 @@ export const mockMarkets: Market[] = [
     image: 'https://picsum.photos/seed/buzeira/100/100',
     type: 'binary',
     category: 'Celebridades',
+    status: 'active',
     volume: 'R$1,542.10',
     endDate: 'Dec 31, 2026',
     binaryData: {
@@ -94,6 +99,7 @@ export const mockMarkets: Market[] = [
     image: 'https://picsum.photos/seed/virginia/100/100',
     type: 'binary',
     category: 'Celebridades',
+    status: 'active',
     volume: 'R$890.50',
     endDate: 'Mar 31, 2026',
     binaryData: {

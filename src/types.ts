@@ -26,6 +26,7 @@ export interface Market {
   image: string;
   type: 'binary' | 'multiple';
   category: string;
+  status?: 'active' | 'resolved' | 'cancelled';
   volume?: string;
   endDate?: string;
   options?: BetOption[];
@@ -47,6 +48,7 @@ export interface User {
   email: string;
   avatar: string;
   balance: number;
+  role?: 'admin' | 'user';
 }
 
 export interface Bet {
@@ -60,4 +62,3 @@ export interface Bet {
   potentialReturn: number;
   createdAt: string;
 }
-

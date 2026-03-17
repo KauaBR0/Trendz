@@ -52,7 +52,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     const newBet: Bet = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substr(2, 9),
       marketId: selectedBet.marketId,
       marketTitle: selectedBet.marketTitle,
       optionName: selectedBet.optionName || 'Mercado Binário',
