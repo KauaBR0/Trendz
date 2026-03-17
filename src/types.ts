@@ -60,3 +60,4 @@ export interface Bet {
   potentialReturn: number;
   createdAt: string;
 }
+
