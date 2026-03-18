@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Users, ShoppingCart, DollarSign, Activity } from 'lucide-react';
 
@@ -86,7 +87,7 @@ export function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) {
+function StatCard({ title, value, icon }: { title: string; value: string; icon: ReactNode }) {
   return (
     <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-6 flex items-center gap-4">
       <div className="p-4 bg-[#121212] rounded-xl border border-[#2a2a2a]">

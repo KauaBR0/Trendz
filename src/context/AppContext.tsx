@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User, Market, Bet, BetOption } from '../types';
-import { mockUser, mockMarkets } from '../mocks/data';
+import { createContext, useContext, useState, type ReactNode } from 'react';
+import { Bet, Market } from '../types';
+import { mockMarkets } from '../mocks/data';
 
 interface SelectedBet {
   marketId: string;
@@ -13,42 +13,31 @@ interface SelectedBet {
 }
 
 interface AppContextType {
-  user: User | null;
   markets: Market[];
   searchQuery: string;
   selectedBet: SelectedBet | null;
   bets: Bet[];
-  login: () => void;
-  logout: () => void;
   setSearchQuery: (query: string) => void;
   selectBet: (bet: SelectedBet | null) => void;
-  placeBet: (amount: number) => void;
+  placeBet: (amount: number, balance: number) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
   const [markets] = useState<Market[]>(mockMarkets);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBet, setSelectedBet] = useState<SelectedBet | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
 
-  const login = () => {
-    setUser(mockUser);
-  };
+  const placeBet = (amount: number, balance: number): boolean => {
+    if (!selectedBet) {
+      return false;
+    }
 
-  const logout = () => {
-    setUser(null);
-    setBets([]);
-  };
-
-  const placeBet = (amount: number) => {
-    if (!user || !selectedBet) return;
-    
-    if (user.balance < amount) {
+    if (balance < amount) {
       alert('Saldo insuficiente');
-      return;
+      return false;
     }
 
     const newBet: Bet = {
@@ -64,19 +53,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     setBets(prev => [newBet, ...prev]);
-    setUser(prev => prev ? { ...prev, balance: prev.balance - amount } : null);
     setSelectedBet(null);
+    return true;
   };
 
   return (
     <AppContext.Provider value={{
-      user,
       markets,
       searchQuery,
       selectedBet,
       bets,
-      login,
-      logout,
       setSearchQuery,
       selectBet: setSelectedBet,
       placeBet

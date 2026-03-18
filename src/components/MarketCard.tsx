@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Star, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import type { BetOption } from '../types';
 
 interface MarketCardProps {
   id: string;
   title: string;
   image: string;
   type: 'binary' | 'multiple';
-  options?: { name: string; image: string; yesOdds: string; noOdds: string }[];
+  options?: BetOption[];
   binaryData?: { yesChance: number; noChance: number; yesOdds: string; noOdds: string; yesReturn: string; noReturn: string };
   category?: string;
 }
@@ -30,7 +31,7 @@ export function MarketCard({ id, title, image, type, options, binaryData, catego
           {options.slice(0, 3).map((opt, idx) => (
             <div key={idx} className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <img src={opt.image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                <img src={opt.image || image} alt="" className="w-6 h-6 rounded-full object-cover" />
                 <span className="text-xs text-gray-300 truncate">{opt.name}</span>
               </div>
               <div className="flex gap-2">

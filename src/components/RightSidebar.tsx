@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Ticket, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 export function RightSidebar() {
   const location = useLocation();
-  const { user, selectedBet, selectBet, placeBet, bets } = useApp();
+  const { selectedBet, selectBet, placeBet, bets } = useApp();
+  const { adjustBalance, profile, user } = useAuth();
   const [activeTab, setActiveTab] = useState<'previsao' | 'abertas'>('previsao');
   const [amount, setAmount] = useState<string>('10');
 
@@ -14,11 +16,16 @@ export function RightSidebar() {
   const potentialReturn = numAmount * (selectedBet?.potentialReturn || 0) / 52.69; // Using the mock ratio
 
   const handlePlaceBet = () => {
-    if (!user) {
+    if (!user || !profile) {
       alert('Por favor, faça login para apostar.');
       return;
     }
-    placeBet(numAmount);
+
+    const didPlaceBet = placeBet(numAmount, profile.balance);
+
+    if (didPlaceBet) {
+      adjustBalance(-numAmount);
+    }
   };
 
   return (
@@ -95,10 +102,10 @@ export function RightSidebar() {
 
                 <button 
                   onClick={handlePlaceBet}
-                  disabled={!user || numAmount <= 0 || (user && user.balance < numAmount)}
+                  disabled={!user || !profile || numAmount <= 0 || profile.balance < numAmount}
                   className="w-full bg-lime-500 hover:bg-lime-400 disabled:bg-[#2a2a2a] disabled:text-gray-500 text-black font-bold py-4 rounded-xl transition-colors mt-auto"
                 >
-                  {!user ? 'Faça Login para Apostar' : user.balance < numAmount ? 'Saldo Insuficiente' : 'Confirmar Previsão'}
+                  {!user ? 'Faça Login para Apostar' : !profile || profile.balance < numAmount ? 'Saldo Insuficiente' : 'Confirmar Previsão'}
                 </button>
               </div>
             )}

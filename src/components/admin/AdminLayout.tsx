@@ -1,14 +1,12 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { AdminSidebar } from './AdminSidebar';
-import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 
 export function AdminLayout() {
-  const { user } = useApp();
+  const { profile, user } = useAuth();
 
-  // Protect admin route
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
+  const displayName = profile?.name || user?.email || 'Admin';
+  const displayAvatar = profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`;
 
   return (
     <div className="flex h-screen bg-[#0f0f0f] text-white font-sans overflow-hidden">
@@ -19,7 +17,7 @@ export function AdminLayout() {
           <h1 className="text-lg font-bold">Painel de Administração</h1>
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-400">Logado como Admin</span>
-            <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border border-lime-500" />
+            <img src={displayAvatar} alt={displayName} className="w-8 h-8 rounded-full border border-lime-500 object-cover" />
           </div>
         </header>
         

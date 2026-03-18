@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Search, Menu, LogOut, Shield } from 'lucide-react';
+import { LayoutDashboard, LogOut, Menu, Search, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LoginModal } from './LoginModal';
 import { RegisterModal } from './RegisterModal';
 import { AlertModal } from './AlertModal';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 export function Header() {
-  const { user, logout, searchQuery, setSearchQuery } = useApp();
+  const { searchQuery, setSearchQuery } = useApp();
+  const { isAdmin, profile, signOut, user } = useAuth();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -43,21 +45,32 @@ export function Header() {
         <div className="flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-4">
-              {user.role === 'admin' && (
+              {isAdmin ? (
                 <Link 
                   to="/admin" 
                   className="hidden md:flex items-center gap-2 text-sm font-medium text-purple-400 bg-purple-400/10 px-3 py-1.5 rounded-lg hover:bg-purple-400/20 transition-colors border border-purple-400/20"
                 >
                   <Shield size={16} /> Painel Admin
                 </Link>
+              ) : (
+                <Link 
+                  to="/dashboard" 
+                  className="hidden md:flex items-center gap-2 text-sm font-medium text-lime-500 bg-lime-500/10 px-3 py-1.5 rounded-lg hover:bg-lime-500/20 transition-colors border border-lime-500/20"
+                >
+                  <LayoutDashboard size={16} /> Meu Painel
+                </Link>
               )}
               <div className="flex flex-col items-end">
                 <span className="text-xs text-gray-400">Saldo</span>
-                <span className="text-sm font-bold text-lime-500">R$ {user.balance.toFixed(2)}</span>
+                <span className="text-sm font-bold text-lime-500">R$ {profile?.balance?.toFixed(2) ?? '0.00'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border border-[#2a2a2a]" />
-                <button onClick={logout} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
+                <img
+                  src={profile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email || 'Trendz'}`}
+                  alt={profile?.name || user.email || 'Usuario'}
+                  className="w-8 h-8 rounded-full border border-[#2a2a2a] object-cover"
+                />
+                <button onClick={() => void signOut()} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
                   <LogOut size={18} />
                 </button>
               </div>

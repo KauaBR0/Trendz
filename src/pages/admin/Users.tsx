@@ -1,18 +1,37 @@
 import { useState } from 'react';
-import { useApp } from '../../context/AppContext';
 import { Search, Ban, Edit2, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+
+interface AdminUserRow {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  balance: number;
+  role: 'admin' | 'user';
+}
 
 export function AdminUsers() {
-  const { user } = useApp();
+  const { profile } = useAuth();
   const [search, setSearch] = useState('');
 
-  // Mocking a list of users based on the current user
-  const mockUsers = [
-    user,
-    { id: 'u2', name: 'Maria Silva', email: 'maria@example.com', avatar: 'https://picsum.photos/seed/maria/100/100', balance: 450.50, role: 'user' },
-    { id: 'u3', name: 'Carlos Santos', email: 'carlos@example.com', avatar: 'https://picsum.photos/seed/carlos/100/100', balance: 12.00, role: 'user' },
-    { id: 'u4', name: 'Ana Oliveira', email: 'ana@example.com', avatar: 'https://picsum.photos/seed/ana/100/100', balance: 8900.00, role: 'user' },
-  ].filter(Boolean) as any[];
+  const currentUser: AdminUserRow | null = profile
+    ? {
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        avatarUrl: profile.avatar_url,
+        balance: profile.balance,
+        role: profile.role,
+      }
+    : null;
+
+  const mockUsers: AdminUserRow[] = [
+    currentUser,
+    { id: 'u2', name: 'Maria Silva', email: 'maria@example.com', avatarUrl: 'https://picsum.photos/seed/maria/100/100', balance: 450.5, role: 'user' },
+    { id: 'u3', name: 'Carlos Santos', email: 'carlos@example.com', avatarUrl: 'https://picsum.photos/seed/carlos/100/100', balance: 12, role: 'user' },
+    { id: 'u4', name: 'Ana Oliveira', email: 'ana@example.com', avatarUrl: 'https://picsum.photos/seed/ana/100/100', balance: 8900, role: 'user' },
+  ].filter((entry): entry is AdminUserRow => entry !== null);
 
   const filteredUsers = mockUsers.filter(u => 
     u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -54,7 +73,7 @@ export function AdminUsers() {
               {filteredUsers.map((u) => (
                 <tr key={u.id} className="border-b border-[#2a2a2a] hover:bg-[#2a2a2a]/50 transition-colors">
                   <td className="px-6 py-4 font-medium text-white flex items-center gap-3">
-                    <img src={u.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                    <img src={u.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
                     <span>{u.name}</span>
                   </td>
                   <td className="px-6 py-4">{u.email}</td>

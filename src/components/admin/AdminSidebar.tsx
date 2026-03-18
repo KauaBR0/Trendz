@@ -1,11 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, ShoppingCart, Users, Settings, LogOut, ArrowLeft } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 
 export function AdminSidebar() {
   const location = useLocation();
-  const { logout } = useApp();
+  const { signOut } = useAuth();
 
   return (
     <aside className="w-64 bg-[#121212] border-r border-[#2a2a2a] flex flex-col h-screen sticky top-0 overflow-y-auto hidden md:flex">
@@ -31,7 +31,7 @@ export function AdminSidebar() {
           <span className="font-medium text-sm">Voltar ao App</span>
         </Link>
         <button 
-          onClick={logout}
+          onClick={() => void signOut()}
           className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl p-3 flex items-center gap-3 transition-colors border border-red-500/20"
         >
           <LogOut size={18} />
@@ -42,7 +42,7 @@ export function AdminSidebar() {
   );
 }
 
-function NavItem({ icon, label, active, to }: { icon: React.ReactNode, label: string, active?: boolean, to: string }) {
+function NavItem({ icon, label, active, to }: { icon: ReactNode; label: string; active?: boolean; to: string }) {
   return (
     <Link 
       to={to}

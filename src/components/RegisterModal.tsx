@@ -1,3 +1,5 @@
+import { useState, type FormEvent } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Modal } from './Modal';
 
 interface RegisterModalProps {
@@ -7,6 +9,53 @@ interface RegisterModalProps {
 }
 
 export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalProps) {
+  const { signUpWithEmail } = useAuth();
+  const [name, setName] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [terms, setTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!terms) {
+      setErrorMsg('Voce precisa aceitar os termos.');
+      return;
+    }
+
+    if (!name || !cpf || !phone || !email || !password) {
+      setErrorMsg('Preencha todos os campos.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    const { error } = await signUpWithEmail(email, password, {
+      name,
+      cpf,
+      phone,
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      setErrorMsg(error.message);
+      return;
+    }
+
+    setSuccessMsg('Conta criada com sucesso! Faca login para continuar.');
+    setTimeout(() => {
+      onLoginClick();
+    }, 2000);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col">
@@ -42,12 +91,27 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
             <h3 className="text-lg font-bold text-white">Cadastro</h3>
           </div>
 
-          <form className="space-y-4">
+          {errorMsg ? <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm font-medium text-red-500">{errorMsg}</div> : null}
+          {successMsg ? <div className="mb-4 rounded-xl border border-lime-500/20 bg-lime-500/10 p-3 text-sm font-medium text-lime-500">{successMsg}</div> : null}
+
+          <form className="space-y-4" onSubmit={handleRegister}>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-white uppercase tracking-wider">Nome</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Seu nome completo"
+                className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-white uppercase tracking-wider">CPF</label>
                 <input
                   type="text"
+                  value={cpf}
+                  onChange={(event) => setCpf(event.target.value)}
                   placeholder="000.000.000-00"
                   className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
                 />
@@ -56,6 +120,8 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
                 <label className="text-xs font-bold text-white uppercase tracking-wider">Telefone</label>
                 <input
                   type="text"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
                   placeholder="(00) 00000-0000"
                   className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
                 />
@@ -66,7 +132,20 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
               <label className="text-xs font-bold text-white uppercase tracking-wider">Email</label>
               <input
                 type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="Ex: joao@gmail.com"
+                className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-white uppercase tracking-wider">Senha</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Crie uma senha forte"
                 className="w-full bg-[#1e1e1e] text-white text-sm rounded-xl px-4 py-3 border border-[#2a2a2a] focus:outline-none focus:border-lime-500 transition-colors placeholder-gray-600"
               />
             </div>
@@ -76,6 +155,8 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
                 <input
                   id="terms"
                   type="checkbox"
+                  checked={terms}
+                  onChange={(event) => setTerms(event.target.checked)}
                   className="w-4 h-4 rounded border-[#2a2a2a] bg-[#1e1e1e] text-lime-500 focus:ring-lime-500 focus:ring-offset-[#121212]"
                 />
               </div>
@@ -85,8 +166,9 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
             </div>
 
             <button
-              type="button"
-              className="w-full bg-lime-500 hover:bg-lime-400 text-black font-bold py-3.5 rounded-xl transition-colors mt-6"
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-lime-500 hover:bg-lime-400 text-black font-bold py-3.5 rounded-xl transition-colors mt-6 disabled:opacity-50"
             >
               CADASTRAR
             </button>
@@ -95,7 +177,7 @@ export function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalPr
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
               Já possui acesso?{' '}
-              <button onClick={onLoginClick} className="text-lime-500 font-bold hover:underline">
+              <button onClick={onLoginClick} type="button" className="text-lime-500 font-bold hover:underline">
                 Entre aqui
               </button>
             </p>
