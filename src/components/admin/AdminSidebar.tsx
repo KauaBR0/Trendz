@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingCart, Users, Settings, LogOut, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ClipboardList, FilePenLine, Gavel, LayoutDashboard, LogOut, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export function AdminSidebar() {
@@ -19,9 +19,11 @@ export function AdminSidebar() {
 
         <nav className="space-y-2">
           <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" active={location.pathname === '/admin'} to="/admin" />
-          <NavItem icon={<ShoppingCart size={20} />} label="Mercados" active={location.pathname.includes('/admin/markets')} to="/admin/markets" />
+          <NavItem icon={<FilePenLine size={20} />} label="Eventos" active={location.pathname.includes('/admin/events') || location.pathname === '/admin/markets'} to="/admin/events" />
+          <NavItem icon={<ClipboardList size={20} />} label="Novo Mercado" active={location.pathname.includes('/admin/markets/new')} to="/admin/markets/new" />
+          <NavItem icon={<ClipboardList size={20} />} label="Revisao" active={location.pathname.includes('/admin/review')} to="/admin/review" />
+          <NavItem icon={<Gavel size={20} />} label="Resolucao" active={location.pathname.includes('/admin/resolution')} to="/admin/resolution" />
           <NavItem icon={<Users size={20} />} label="Usuários" active={location.pathname.includes('/admin/users')} to="/admin/users" />
-          <NavItem icon={<Settings size={20} />} label="Configurações" active={location.pathname.includes('/admin/settings')} to="/admin" />
         </nav>
       </div>
 

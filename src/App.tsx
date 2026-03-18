@@ -3,18 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Suspense, lazy, type ReactNode } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { AdminLayout } from './components/admin/AdminLayout';
+import { RouteLoader } from './components/RouteLoader';
 import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { Home } from './pages/Home';
 import { MarketDetail } from './pages/MarketDetail';
-import { UserDashboard } from './pages/UserDashboard';
-import { AdminDashboard } from './pages/admin/Dashboard';
-import { AdminMarkets } from './pages/admin/Markets';
-import { AdminUsers } from './pages/admin/Users';
+
+const UserDashboard = lazy(() => import('./pages/UserDashboard').then(module => ({ default: module.UserDashboard })));
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(module => ({ default: module.AdminLayout })));
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard').then(module => ({ default: module.AdminDashboard })));
+const AdminEvents = lazy(() => import('./pages/admin/Events').then(module => ({ default: module.AdminEvents })));
+const AdminMarketWizard = lazy(() => import('./pages/admin/MarketWizard').then(module => ({ default: module.AdminMarketWizard })));
+const AdminReviewQueue = lazy(() => import('./pages/admin/ReviewQueue').then(module => ({ default: module.AdminReviewQueue })));
+const AdminResolution = lazy(() => import('./pages/admin/Resolution').then(module => ({ default: module.AdminResolution })));
+const AdminUsers = lazy(() => import('./pages/admin/Users').then(module => ({ default: module.AdminUsers })));
 
 export default function App() {
   return (
@@ -29,7 +35,9 @@ export default function App() {
                 path="dashboard"
                 element={
                   <ProtectedRoute>
-                    <UserDashboard />
+                    <LazyPage>
+                      <UserDashboard />
+                    </LazyPage>
                   </ProtectedRoute>
                 }
               />
@@ -39,17 +47,27 @@ export default function App() {
               path="/admin"
               element={
                 <ProtectedRoute requiredRole="admin">
-                  <AdminLayout />
+                  <LazyPage>
+                    <AdminLayout />
+                  </LazyPage>
                 </ProtectedRoute>
               }
             >
-              <Route index element={<AdminDashboard />} />
-              <Route path="markets" element={<AdminMarkets />} />
-              <Route path="users" element={<AdminUsers />} />
+              <Route index element={<LazyPage><AdminDashboard /></LazyPage>} />
+              <Route path="events" element={<LazyPage><AdminEvents /></LazyPage>} />
+              <Route path="markets" element={<Navigate to="/admin/events" replace />} />
+              <Route path="markets/new" element={<LazyPage><AdminMarketWizard /></LazyPage>} />
+              <Route path="review" element={<LazyPage><AdminReviewQueue /></LazyPage>} />
+              <Route path="resolution" element={<LazyPage><AdminResolution /></LazyPage>} />
+              <Route path="users" element={<LazyPage><AdminUsers /></LazyPage>} />
             </Route>
           </Routes>
         </BrowserRouter>
       </AppProvider>
     </AuthProvider>
   );
+}
+
+function LazyPage({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<RouteLoader />}>{children}</Suspense>;
 }

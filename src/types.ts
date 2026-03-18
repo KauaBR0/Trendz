@@ -62,3 +62,69 @@ export interface Bet {
   potentialReturn: number;
   createdAt: string;
 }
+
+export type EditorialWorkflowStatus =
+  | 'rascunho'
+  | 'em_revisao'
+  | 'aprovado'
+  | 'publicado'
+  | 'travado'
+  | 'em_resolucao'
+  | 'resolvido'
+  | 'cancelado';
+
+export type EditorialMarketType = 'binario' | 'multipla_escolha';
+
+export interface EditorialEvent {
+  id: string;
+  title: string;
+  category: string;
+  subtype: string;
+  description: string;
+  image: string;
+  region: string;
+  eventDate: string;
+  status: EditorialWorkflowStatus;
+  tags: string[];
+  marketCount: number;
+  owner: string;
+  lastUpdated: string;
+}
+
+export interface EditorialMarketOption {
+  id: string;
+  label: string;
+}
+
+export interface EditorialMarket {
+  id: string;
+  eventId: string;
+  eventTitle: string;
+  category: string;
+  question: string;
+  marketType: EditorialMarketType;
+  status: EditorialWorkflowStatus;
+  closeAt: string;
+  resolutionRule: string;
+  cancellationRule: string;
+  officialSources: string[];
+  options: EditorialMarketOption[];
+  owner: string;
+  reviewer?: string;
+  resolver?: string;
+  riskLevel: 'baixo' | 'medio' | 'alto';
+  notes?: string;
+  template: string;
+  lastUpdated: string;
+}
+
+export interface EditorialTemplate {
+  id: string;
+  label: string;
+  category: string;
+  marketType: EditorialMarketType;
+  description: string;
+  questionExample: string;
+  defaultSources: string[];
+  checklist: string[];
+}

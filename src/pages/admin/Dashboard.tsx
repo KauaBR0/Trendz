@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
+import { ArrowRight, ClipboardList, FilePenLine, Gavel, Users, ShoppingCart, DollarSign, Activity } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
-import { Users, ShoppingCart, DollarSign, Activity } from 'lucide-react';
+import { editorialEvents, editorialMarkets } from '../../mocks/editorial';
+import { editorialStatusLabels, editorialStatusStyles, isEditorialLive } from './editorialUi';
 
 export function AdminDashboard() {
   const { markets, bets } = useApp();
@@ -12,9 +15,12 @@ export function AdminDashboard() {
 
   const activeMarkets = markets.filter(m => m.status === 'active').length;
   const totalBets = bets.length;
+  const liveEditorialEvents = editorialEvents.filter(event => isEditorialLive(event.status)).length;
+  const reviewQueue = editorialMarkets.filter(market => market.status === 'em_revisao').length;
+  const resolutionQueue = editorialMarkets.filter(market => market.status === 'travado' || market.status === 'em_resolucao').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h2 className="text-2xl font-bold">Visão Geral</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -38,6 +44,57 @@ export function AdminDashboard() {
           value="1,245" 
           icon={<Users size={24} className="text-orange-500" />} 
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+        <div className="rounded-3xl border border-[#2a2a2a] bg-[radial-gradient(circle_at_top_left,_rgba(132,204,22,0.15),_transparent_40%),linear-gradient(180deg,_#161b14_0%,_#101010_72%)] p-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-lime-300">Workflow editorial</p>
+              <h3 className="mt-3 text-2xl font-black text-white">Da pauta ate a resolucao</h3>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-300">
+                Novas telas do admin para organizar eventos, criar mercados por template, revisar copy e resolver com fonte auditavel.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <CompactMetric icon={<FilePenLine size={16} className="text-lime-300" />} label="Eventos ativos" value={String(liveEditorialEvents)} />
+              <CompactMetric icon={<ClipboardList size={16} className="text-amber-300" />} label="Em revisao" value={String(reviewQueue)} />
+              <CompactMetric icon={<Gavel size={16} className="text-fuchsia-300" />} label="Em resolucao" value={String(resolutionQueue)} />
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            <QuickLinkCard to="/admin/events" title="Eventos" description="Pacotes editoriais, categorias, tags e volume planejado." />
+            <QuickLinkCard to="/admin/markets/new" title="Novo mercado" description="Wizard com template, fontes e checklist operacional." />
+            <QuickLinkCard to="/admin/review" title="Fila de revisao" description="Aprove ou devolva mercados antes de publicar." />
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-[#2a2a2a] bg-[#1a1613] p-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-bold text-white">Fila editorial</h3>
+            <Link to="/admin/resolution" className="text-sm font-semibold text-lime-400 transition-colors hover:text-lime-300">
+              Abrir painel
+            </Link>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {editorialMarkets.slice(0, 4).map(market => (
+              <div key={market.id} className="rounded-2xl border border-[#2a2a2a] bg-[#101010] p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="line-clamp-2 text-sm font-semibold text-white">{market.question}</p>
+                    <p className="mt-1 text-xs text-gray-500">{market.eventTitle}</p>
+                  </div>
+                  <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${editorialStatusStyles[market.status]}`}>
+                    {editorialStatusLabels[market.status]}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -84,6 +141,30 @@ export function AdminDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function CompactMetric({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-[#2a2a2a] bg-black/20 p-4">
+      <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-gray-400">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <p className="mt-3 text-2xl font-black text-white">{value}</p>
+    </div>
+  );
+}
+
+function QuickLinkCard({ to, title, description }: { to: string; title: string; description: string }) {
+  return (
+    <Link to={to} className="rounded-2xl border border-[#2a2a2a] bg-[#101010] p-4 transition-colors hover:bg-[#181818]">
+      <p className="text-base font-bold text-white">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-gray-400">{description}</p>
+      <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-lime-400">
+        Abrir <ArrowRight size={15} />
+      </span>
+    </Link>
   );
 }
 
